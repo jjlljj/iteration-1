@@ -4,7 +4,7 @@ function gameOfLife(num) {
   for (let i = 0; i<num; i++) {
     let row = []
     for (let j = 0; j<num; j++) {
-      let random = Math.floor(Math.random() + .5)
+      let random = Math.floor(Math.random() + .65)
       row.push(random)
     }
     game.push(row)
@@ -78,6 +78,6 @@ const game = gameOfLife(18)
 
 setInterval(() => {
   playGame(game, 18)
-},300)
+},1000)
 
 //console.log(playGame(15))

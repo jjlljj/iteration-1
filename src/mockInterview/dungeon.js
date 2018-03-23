@@ -1,21 +1,60 @@
 const buildDungeon = (size) => {
 
-  const dungeonArray = []
+  const dungeon3d = []
+  let prevI
+  let prevJ
 
-  for ( let i = 0; i < size; i++ ) {
-    let rowArray = []
-    for ( let j = 0; j < size; j++ ) {
-       rowArray.push(buildCell( dungeonArray, size, i, j, rowArray ))
+  for ( let l = 0; l < size; l++ ) {
+    const dungeonArray = []
+    let randomI = randomNum(size-1)
+    while (randomI === prevI ) {
+      randomI = randomNum(size-1)
     }
-   dungeonArray.push(rowArray)
+    let randomJ = randomNum(size-1)
+    while (randomJ === prevJ) {
+      randomJ = randomNum(size-1)
+    }
+
+    for ( let i = 0; i < size; i++ ) {
+      let rowArray = []
+
+      for ( let j = 0; j < size; j++ ) {
+        if ( l > 0 && i === prevI && j === prevJ ) {
+          rowArray.push('U')
+        } else if ( i === randomI && j === randomJ && l !== size-1) {
+          rowArray.push('D')
+        } else {
+          rowArray.push(buildCell( dungeonArray, size, i, j, rowArray ))
+        }
+      }
+
+     dungeonArray.push(rowArray)
+    }
+
+    prevI = randomI
+    prevJ = randomJ
+      
+    dungeon3d.push(dungeonArray)
   }
 
-  return dungeonArray
+  return dungeon3d
 }
 
+const randomNum = (num) => {
+
+  return Math.floor(Math.random()*num)
+}
+
+// generate an down stair at random index
+// pass that index to next level, as upstair
+// generate a new down stair at random index !== upstair
+// dungeon3[l][i][j]
+
 const buildCell = ( dungeonArray, size, i, j, rowArray ) => {
-  
   const surroundingCells = []
+
+  // const surroundingCells = lookAround()
+  // conditional render of monsters
 
   if ( j > 0 ) {
     surroundingCells.push(rowArray[j-1])
@@ -25,69 +64,26 @@ const buildCell = ( dungeonArray, size, i, j, rowArray ) => {
     surroundingCells.push(dungeonArray[i-1][j-1])
     surroundingCells.push(dungeonArray[i-1][j+1])
   }
- 
 
   const possibilities = [ ' ', ' ', ' ', 'M']
 
   if (surroundingCells.includes('M')) {
     possibilities.pop()
   } 
-
   const random = Math.floor(Math.random()*possibilities.length)
   return  possibilities[random] 
 } 
 
-
-console.log(buildDungeon(15))
-
-// const buildDungeon = (size) => {
-
-//   const dungeonArray = []
-
-//   for ( let i = 0; i < size*size; i++ ) {
-//     dungeonArray.push(buildCell( dungeonArray, size, i ))
-//   }
-
-//   return dungeonArray
-// }
-
-// const buildCell = ( dungeonArray, size, i ) => {
-//   const surroundingCells = []
-
-//   surroundingCells.push(dungeonArray[i-1])
-//   surroundingCells.push(dungeonArray[i-size])
-//   surroundingCells.push(dungeonArray[i-size-1])
-//   surroundingCells.push(dungeonArray[i-size+1])
-
-//   const possibilities = [ 't', '#', '_', 'M']
-
-//   if (surroundingCells.includes('M')) {
-//     possiblities.pop()
-//   } 
-
-//   const random = Math.floor(Math.random()*possibilities.length)
-//   return  possibilities[random] 
-// } 
-
-// look up, only care about the first monster found before you
-
-// interview questions are problems where n2 is the answer --> checking on a grid
+console.log(buildDungeon(4))
 
 
-
-
-
-
-// //Write a method that takes in a parameter `size` which builds and returns a two-dimensional square grid where each side of the grid is `size` cells.
-
-// Next, your method should populate the dungeon with one of four markers:
-
-// `M` indicates a monster
-// `t` indicates treasure
-// `#` indicates a rock pile
-// `_` indicates empty space
-// All markers on the map should have an approximately equal chance of appearing on the map.
-
-// We want to avoid an overrun of monsters in our game world. Your map should not contain any cells where a monster exists in any cells around another monster (including diagonally).
-
-// Output of the map should look something like this, depending on your programming language, where size is 4:
+// make it 3d
+// each level needs a staircase to the level above, level below. 
+//      top only needs stair down
+//      bottom only stairs up
+// staircases can't be stacked ( up/down within level)
+//
+// stairs need to align level to level
+//
+//
+// no adjacently stacked monsters
